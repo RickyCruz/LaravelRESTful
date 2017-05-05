@@ -34,6 +34,39 @@ class User extends Authenticatable
         'password', 'remember_token', 'verification_token',
     ];
 
+    /*
+    |--------------------------------------------------------------------------
+    | Accessors
+    |--------------------------------------------------------------------------
+    */
+
+    public function getNameAttribute($value)
+    {
+        return ucwords($value);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Mutators
+    |--------------------------------------------------------------------------
+    */
+
+    public function setNameAttribute($value)
+    {
+        $this->attributes['name'] = strtolower($value);
+    }
+
+    public function setEmailAttribute($value)
+    {
+        $this->attributes['email'] = strtolower($value);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Custom Methods
+    |--------------------------------------------------------------------------
+    */
+
     public function isVerified()
     {
         return $this->verified == User::VERIFIED;
