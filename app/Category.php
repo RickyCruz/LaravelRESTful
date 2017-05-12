@@ -26,6 +26,13 @@ class Category extends Model
      */
     protected $dates = ['deleted_at'];
 
+    /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = ['pivot'];
+
     /*
     |--------------------------------------------------------------------------
     | Relationships
