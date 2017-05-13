@@ -7,6 +7,7 @@ use App\Seller;
 use App\Product;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class SellerProductController extends ApiController
@@ -50,7 +51,7 @@ class SellerProductController extends ApiController
 
         $data = $request->all();
         $data['status'] = Product::NOT_AVAILABLE;
-        $data['image'] = 'http://lorempixel.com/128/128/?30306';
+        $data['image'] = $request->image->store('');
         $data['seller_id'] = $seller->id;
 
         $product = Product::create($data);
@@ -114,6 +115,11 @@ class SellerProductController extends ApiController
             }
         }
 
+        if ($request->hasFile('image')) {
+            Storage::delete($product->image);
+            $product->image = $request->image->store('');
+        }
+
         if ($product->isClean()) {
             return $this->errorResponse(
                 'At least one different value must be specified to update the data.',
@@ -135,6 +141,7 @@ class SellerProductController extends ApiController
     public function destroy(Seller $seller, Product $product)
     {
         $this->verifySeller($seller, $product);
+        Storage::delete($product->image);
         $product->delete();
 
         return $this->showOne($product);
