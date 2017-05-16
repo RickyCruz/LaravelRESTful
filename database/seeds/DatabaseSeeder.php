@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->truncateDB();
+        $this->flushEventListeners();
 
         factory(User::class, 200)->create();
         factory(Category::class, 30)->create();
@@ -35,5 +36,13 @@ class DatabaseSeeder extends Seeder
         Product::truncate();
         Transaction::truncate();
         DB::table('category_product')->truncate();
+    }
+
+    private function flushEventListeners()
+    {
+        User::flushEventListeners();
+        Category::flushEventListeners();
+        Product::flushEventListeners();
+        Transaction::flushEventListeners();
     }
 }

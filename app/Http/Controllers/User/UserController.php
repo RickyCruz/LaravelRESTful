@@ -4,7 +4,9 @@ namespace App\Http\Controllers\User;
 
 use App\User;
 use Illuminate\Http\Request;
+use App\Notifications\UserCreated;
 use App\Http\Controllers\ApiController;
+use Illuminate\Support\Facades\Notification;
 
 class UserController extends ApiController
 {
@@ -49,7 +51,7 @@ class UserController extends ApiController
             'email' => $request->email,
             'password' => bcrypt($request->password),
             'verified' =>  User::NOT_VERIFIED,
-            'verification_token' => null,
+            'verification_token' => User::generateVerificationToken(),
             'admin' => User::NOT_ADMIN,
         ]);
 
@@ -139,5 +141,29 @@ class UserController extends ApiController
         $user->delete();
 
         return $this->showOne($user);
+    }
+
+    public function verify($token)
+    {
+        $user = User::where('verification_token', $token)->firstOrFail();
+        $user->verified = User::VERIFIED;
+        $user->verification_token = null;
+        $user->save();
+
+        return $this->showMessage('The account has been verified.');
+    }
+
+    public function resend(User $user)
+    {
+        if ($user->isVerified()) {
+            return $this->errorResponse('This user has already been verified.', 409);
+        }
+
+        // Attempt 5 times while resting 100ms in between attempts...
+        retry(5, function () use ($user) {
+            Notification::send($user, new UserCreated);
+        }, 100);
+
+        return $this->showMessage('The verification email has been sent.');
     }
 }
