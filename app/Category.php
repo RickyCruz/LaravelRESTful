@@ -4,6 +4,7 @@ namespace App;
 
 use App\Product;
 use Illuminate\Database\Eloquent\Model;
+use App\Transformers\CategoryTransformer;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Category extends Model
@@ -32,6 +33,12 @@ class Category extends Model
      * @var array
      */
     protected $hidden = ['pivot'];
+
+    /**
+     * Using Fractal to transfrom model.
+     * @var class
+     */
+    public $transformer = CategoryTransformer::class;
 
     /*
     |--------------------------------------------------------------------------

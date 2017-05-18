@@ -5,10 +5,17 @@ namespace App;
 use App\User;
 use App\Product;
 use App\Scopes\SellerScope;
+use App\Transformers\SellerTransformer;
 use Illuminate\Database\Eloquent\Model;
 
 class Seller extends User
 {
+    /**
+     * Using Fractal to transfrom model.
+     * @var class
+     */
+    public $transformer = SellerTransformer::class;
+
     /**
      * The "booting" method of the model.
      *

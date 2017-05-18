@@ -6,6 +6,7 @@ use App\Seller;
 use App\Category;
 use App\Transaction;
 use Illuminate\Database\Eloquent\Model;
+use App\Transformers\ProductTransformer;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
@@ -37,6 +38,12 @@ class Product extends Model
      * @var array
      */
     protected $hidden = ['pivot'];
+
+    /**
+     * Using Fractal to transfrom model.
+     * @var class
+     */
+    public $transformer = ProductTransformer::class;
 
     /*
     |--------------------------------------------------------------------------

@@ -5,6 +5,7 @@ namespace App;
 use App\Buyer;
 use App\Product;
 use Illuminate\Database\Eloquent\Model;
+use App\Transformers\TransactionTransformer;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Transaction extends Model
@@ -26,6 +27,12 @@ class Transaction extends Model
      * @var array
      */
     protected $dates = ['deleted_at'];
+
+    /**
+     * Using Fractal to transfrom model.
+     * @var class
+     */
+    public $transformer = TransactionTransformer::class;
 
     /*
     |--------------------------------------------------------------------------
