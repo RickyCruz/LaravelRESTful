@@ -5,11 +5,19 @@ namespace App\Http\Controllers\User;
 use App\User;
 use Illuminate\Http\Request;
 use App\Notifications\UserCreated;
+use App\Transformers\UserTransformer;
 use App\Http\Controllers\ApiController;
 use Illuminate\Support\Facades\Notification;
 
 class UserController extends ApiController
 {
+    public function __construct()
+    {
+        parent::__construct();
+        $this->middleware('transform.input:' . UserTransformer::class)
+            ->only(['store', 'update']);
+    }
+
     /**
      * Display a listing of the resource.
      *

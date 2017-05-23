@@ -40,11 +40,31 @@ class UserTransformer extends TransformerAbstract
             'identifier' => 'id',
             'name'       => 'name',
             'email'      => 'email',
+            'pwd'        => 'password',
+            'pwd_match'  => 'password_confirmation',
             'isVerified' => 'verified',
             'isAdmin'    => 'admin',
             'created'    => 'created_at',
             'updated'    => 'updated_at',
             'deleted'    => 'deleted_at',
+        ];
+
+        return isset($attributes[$index]) ? $attributes[$index] : null;
+    }
+
+    public static function transformedAttributes($index)
+    {
+        $attributes = [
+            'id'                     => 'identifier',
+            'name'                   => 'name',
+            'email'                  => 'email',
+            'password'               => 'pwd',
+            'password_confirmation'  => 'pwd_match',
+            'verified'               => 'isVerified',
+            'admin'                  => 'isAdmin',
+            'created_at'             => 'created',
+            'updated_at'             => 'updated',
+            'deleted_at'             => 'deleted',
         ];
 
         return isset($attributes[$index]) ? $attributes[$index] : null;
