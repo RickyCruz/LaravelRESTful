@@ -6,6 +6,7 @@ use Exception;
 use App\Traits\ApiResponse;
 use Illuminate\Database\QueryException;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Session\TokenMismatchException;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -55,10 +56,16 @@ class Handler extends ExceptionHandler
     public function render($request, Exception $exception)
     {
         if ($exception instanceof ValidationException) {
-            return $this->errorResponse(
-                $exception->validator->errors()->getMessages(),
-                422
-            );
+            $errors = $exception->validator->errors()->getMessages();
+
+            if ($this->isFrontEnd($request)) {
+                return $request->ajax()
+                    ? response()->json($errors, 422)
+                    : redirect()->back()->withInput($request->input())
+                        ->withErrors($errors);
+            }
+
+            return $this->errorResponse($errors, 422);
         }
 
         if ($exception instanceof ModelNotFoundException) {
@@ -113,6 +120,10 @@ class Handler extends ExceptionHandler
             }
         }
 
+        if ($exception instanceof TokenMismatchException) {
+            return redirect()->back()->withInput($request->input());
+        }
+
         if (config('app.debug')) {
             return parent::render($request, $exception);
         }
@@ -129,6 +140,17 @@ class Handler extends ExceptionHandler
      */
     protected function unauthenticated($request, AuthenticationException $exception)
     {
+        if ($this->isFrontEnd($request)) {
+            return redirect()->guest('login');
+        }
+
         return $this->errorResponse('Unauthenticated.', 401);
+    }
+
+    private function isFrontEnd($request)
+    {
+        $isWeb = collect($request->route()->middleware())->contains('web');
+
+        return $request->acceptsHtml() && $isWeb;
     }
 }
