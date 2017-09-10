@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
 use Illuminate\Support\Facades\Storage;
 use App\Transformers\ProductTransformer;
+use Illuminate\Auth\AuthenticationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class SellerProductController extends ApiController
@@ -28,9 +29,13 @@ class SellerProductController extends ApiController
      */
     public function index(Seller $seller)
     {
-        $products = $seller->products;
+        if ($this->oAuth2TokensCan()) {
+            $products = $seller->products;
 
-        return $this->showAll($products);
+            return $this->showAll($products);
+        }
+
+        throw new AuthenticationException;
     }
 
     /**
@@ -132,5 +137,11 @@ class SellerProductController extends ApiController
                 'The seller specified is not the same as the seller who registered the product.'
             );
         }
+    }
+
+    private function oAuth2TokensCan()
+    {
+        return request()->user()->tokenCan('read-general') ||
+            request()->user()->tokenCan('manage-products');
     }
 }
