@@ -31,5 +31,12 @@ class AuthServiceProvider extends ServiceProvider
         Passport::tokensExpireIn(Carbon::now()->addDays(3));
         Passport::refreshTokensExpireIn(Carbon::now()->addDays(30));
         Passport::enableImplicitGrant();
+
+        Passport::tokensCan([
+            'purchase-product' => 'Create transactions to buy certain products.',
+            'manage-products' => 'Create, view, update and delete products.',
+            'manage-account' => 'Get account information, name, email, status (without password); modify data such as email, name, password. You can not delete the account.',
+            'read-general' => 'Get general information, categories where you buy and sell, products sold or bought, transactions, purchases and sales.'
+        ]);
     }
 }
