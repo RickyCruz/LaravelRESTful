@@ -87,7 +87,7 @@ class SellerProductController extends ApiController
         $this->verifySeller($seller, $product);
 
         $product->fill(
-            $request->intersect(['name', 'description', 'quantity'])
+            $request->only(['name', 'description', 'quantity'])
         );
 
         if ($request->has('status')) {

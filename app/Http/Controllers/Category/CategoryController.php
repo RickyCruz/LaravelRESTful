@@ -78,7 +78,7 @@ class CategoryController extends ApiController
         $this->allowedAdminAction();
 
         $category->fill(
-            $request->intersect(['name', 'description'])
+            $request->only(['name', 'description'])
         );
 
         if ($category->isClean()) {
